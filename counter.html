@@ -1049,7 +1049,239 @@
       border-color: #16a34a !important;
       color: #15803d !important;
     }
-  .page-logo-text{color:#0f2544;font-size:24px;font-weight:900;text-align:center;margin:0 auto 10px;} `</style>
+  .page-logo-text{color:#0f2544;font-size:24px;font-weight:900;text-align:center;margin:0 auto 10px;}
+
+    @media (max-width: 620px) {
+      body {
+        padding: 6px !important;
+      }
+
+      .app {
+        width: 100% !important;
+      }
+
+      .module-nav {
+        gap: 5px !important;
+        margin-bottom: 6px !important;
+      }
+
+      .module-nav a {
+        font-size: 12px !important;
+        padding: 6px 8px !important;
+      }
+
+      .page-logo-text,
+      .title,
+      .subtitle {
+        display: none !important;
+      }
+
+      .website-mode-note,
+      .web-disclaimer-note {
+        font-size: 12px !important;
+        line-height: 1.35 !important;
+        margin-bottom: 6px !important;
+        padding: 7px 9px !important;
+      }
+
+      .manual-module-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 6px !important;
+        margin-bottom: 8px !important;
+      }
+
+      .manual-module-card {
+        min-height: 40px !important;
+        padding: 7px 8px !important;
+      }
+
+      .manual-module-card strong {
+        font-size: 13px !important;
+        line-height: 1.2 !important;
+      }
+
+      .manual-module-card span {
+        display: none !important;
+      }
+
+      .section {
+        border-radius: 6px !important;
+        margin-bottom: 8px !important;
+      }
+
+      .section-header {
+        padding: 7px 8px !important;
+      }
+
+      .section-title {
+        font-size: 15px !important;
+      }
+
+      .section-body {
+        padding: 7px !important;
+      }
+
+      .summary-strip {
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        gap: 5px !important;
+        margin-bottom: 6px !important;
+      }
+
+      .summary-item {
+        border-radius: 6px !important;
+        padding: 5px 6px !important;
+      }
+
+      .summary-label {
+        font-size: 10px !important;
+        line-height: 1.1 !important;
+      }
+
+      .summary-value {
+        font-size: 18px !important;
+        line-height: 1.1 !important;
+        margin-top: 1px !important;
+      }
+
+      .counter-list,
+      .turning-lane-list {
+        gap: 5px !important;
+      }
+
+      .counter-list .counter-row {
+        grid-template-columns: minmax(66px, 1fr) 42px 48px 38px 38px !important;
+        gap: 4px !important;
+        min-height: 42px !important;
+        padding: 5px !important;
+      }
+
+      .counter-row > div:first-child {
+        min-width: 0 !important;
+      }
+
+      .counter-name {
+        font-size: 14px !important;
+        line-height: 1.15 !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+      }
+
+      .tag,
+      .turning-counter-head .counter-meta,
+      .turning-counter-row > .counter-meta {
+        display: none !important;
+      }
+
+      .count-input,
+      .field-input,
+      .lane-count-input {
+        border-radius: 6px !important;
+        font-size: 15px !important;
+        height: 32px !important;
+        padding: 0 4px !important;
+      }
+
+      .button {
+        border-radius: 6px !important;
+        font-size: 12px !important;
+        min-height: 32px !important;
+        min-width: 0 !important;
+        padding: 0 5px !important;
+      }
+
+      .count-plus {
+        font-size: 16px !important;
+        min-height: 34px !important;
+        min-width: 48px !important;
+      }
+
+      .turning-config-grid {
+        gap: 7px !important;
+      }
+
+      .lane-config-grid {
+        gap: 5px !important;
+      }
+
+      .lane-config-row {
+        grid-template-columns: minmax(0, 1fr) 52px !important;
+        gap: 5px !important;
+        padding: 5px 6px !important;
+      }
+
+      .lane-config-row strong,
+      .lane-label-inline {
+        font-size: 13px !important;
+        line-height: 1.1 !important;
+      }
+
+      .lane-icon {
+        height: 20px !important;
+        width: 20px !important;
+      }
+
+      .lane-group-title,
+      .lane-advanced-note {
+        font-size: 12px !important;
+      }
+
+      .lane-advanced summary {
+        min-height: 32px !important;
+        padding: 0 8px !important;
+      }
+
+      .turning-counter-block {
+        gap: 4px !important;
+        padding: 6px !important;
+      }
+
+      .turning-counter-head {
+        grid-template-columns: minmax(0, 1fr) auto !important;
+        gap: 5px !important;
+      }
+
+      .count-mode {
+        gap: 2px !important;
+        padding: 2px !important;
+      }
+
+      .count-mode button {
+        font-size: 11px !important;
+        min-height: 26px !important;
+        padding: 0 6px !important;
+      }
+
+      .turning-counter-row {
+        grid-template-columns: 42px 48px 34px 40px !important;
+        gap: 4px !important;
+        min-height: 42px !important;
+        padding: 5px !important;
+      }
+
+      .turning-lane-row {
+        grid-template-columns: 52px 42px 48px 34px 40px !important;
+        gap: 4px !important;
+        min-height: 42px !important;
+        padding: 5px !important;
+      }
+
+      .turning-lane-row .counter-meta {
+        font-size: 12px !important;
+        margin-top: 0 !important;
+      }
+
+      .preset-area {
+        gap: 5px !important;
+      }
+
+      .preset-button {
+        font-size: 12px !important;
+        min-height: 30px !important;
+        padding: 0 8px !important;
+      }
+    }
+  </style>
 </head>
 <body>
   <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
