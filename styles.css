@@ -231,8 +231,8 @@ nav a:hover {
   display: grid;
   gap: 28px;
   grid-template-columns: minmax(0, 1fr) minmax(300px, 420px);
-  min-height: 76vh;
-  padding: 72px max(28px, calc((100vw - 1120px) / 2)) 56px;
+  min-height: auto;
+  padding: 54px max(28px, calc((100vw - 1120px) / 2)) 42px;
 }
 
 .hero-content,
@@ -972,8 +972,8 @@ p {
       url("") center 72px / min(82vw, 360px) auto no-repeat,
       #10232a;
     grid-template-columns: 1fr;
-    min-height: 78vh;
-    padding: 240px 18px 36px;
+    min-height: auto;
+    padding: 120px 18px 32px;
   }
 
   .metric-row,
