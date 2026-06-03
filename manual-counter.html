@@ -1,0 +1,2110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>智京交通计数器 v0.9.0-beta</title>
+  <link rel="icon" href="data:,">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+      color: #1f2937;
+      background: #eef2f6;
+      padding: 12px;
+    }
+
+    body::before {
+      content: "ZhiJing交通计数器";
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 64px;
+      color: rgba(31, 41, 55, 0.045);
+      z-index: 9999;
+      pointer-events: none;
+      white-space: nowrap;
+      font-weight: 700;
+    }
+
+    .app {
+      width: min(980px, 100%);
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .module-nav {
+      align-items: center;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin: 0 auto 14px;
+      max-width: 980px;
+    }
+
+    .module-nav a {
+      background: #fff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      color: #2563eb;
+      font-size: 14px;
+      font-weight: 800;
+      padding: 9px 12px;
+      text-decoration: none;
+    }
+
+    .module-nav a:hover {
+      border-color: #2563eb;
+    }
+
+    .title {
+      text-align: center;
+      font-size: 28px;
+      margin: 12px 0 6px;
+      color: #111827;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #64748b;
+      margin-bottom: 14px;
+      font-size: 14px;
+    }
+
+    .page-logo {
+      display: block;
+      height: auto;
+      margin: 0 auto 12px;
+      max-width: 150px;
+      width: 28vw;
+    }
+
+    .manual-module-grid {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: 1fr 1fr;
+      margin-bottom: 12px;
+    }
+
+    .manual-module-card {
+      min-height: 86px;
+      padding: 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      background: #fff;
+      color: #1f2937;
+      text-align: left;
+      cursor: pointer;
+      display: grid;
+      gap: 7px;
+      align-content: start;
+    }
+
+    .manual-module-card.active {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+      background: #eff6ff;
+    }
+
+    .manual-module-card strong {
+      color: #111827;
+      font-size: 17px;
+    }
+
+    .manual-module-card span {
+      color: #64748b;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .module-badge {
+      display: inline-flex;
+      width: fit-content;
+      min-height: 22px;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #f1f5f9;
+      color: #475569;
+      font-size: 12px;
+      font-style: normal;
+      font-weight: 800;
+    }
+
+    .module-view[hidden] {
+      display: none;
+    }
+
+    .placeholder-panel {
+      min-height: 220px;
+      display: grid;
+      place-items: center;
+      padding: 30px 16px;
+      text-align: center;
+    }
+
+    .placeholder-panel h2 {
+      color: #111827;
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+
+    .placeholder-panel p {
+      color: #64748b;
+      font-size: 15px;
+      line-height: 1.6;
+      max-width: 560px;
+    }
+
+    .turning-config-grid {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: minmax(220px, 1fr) 2fr;
+      align-items: start;
+    }
+
+    .lane-config-grid {
+      display: grid;
+      gap: 8px;
+    }
+
+    .lane-group-title {
+      color: #334155;
+      font-size: 13px;
+      font-weight: 800;
+      margin: 2px 0 1px;
+    }
+
+    .lane-advanced {
+      border: 1px solid #d7e0ea;
+      border-radius: 8px;
+      background: #f8fafc;
+      overflow: hidden;
+    }
+
+    .lane-advanced summary {
+      cursor: pointer;
+      color: #1e3a8a;
+      font-size: 14px;
+      font-weight: 800;
+      list-style-position: inside;
+      padding: 11px 12px;
+    }
+
+    .lane-advanced-body {
+      display: grid;
+      gap: 8px;
+      padding: 0 10px 10px;
+    }
+
+    .lane-advanced-note {
+      color: #64748b;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.45;
+      padding: 0 2px 2px;
+    }
+
+    .lane-config-row {
+      align-items: center;
+      display: grid;
+      gap: 8px;
+      grid-template-columns: minmax(120px, 1fr) 120px;
+      padding: 9px 10px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      background: #f8fafc;
+    }
+
+    .lane-config-row strong {
+      color: #111827;
+      font-size: 15px;
+    }
+
+    .lane-label-inline {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .lane-icon {
+      flex: 0 0 auto;
+      width: 34px;
+      height: 34px;
+      color: #1d4ed8;
+      overflow: visible;
+    }
+
+    .lane-icon.combo {
+      width: 40px;
+      height: 40px;
+    }
+
+    .lane-icon.non-motor {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border: 2px solid #16803c;
+      border-radius: 50%;
+      color: #166534;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .lane-count-input {
+      width: 100%;
+      height: 36px;
+      border: 2px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 0 10px;
+      text-align: center;
+      font: inherit;
+      font-weight: 800;
+    }
+
+    .turning-counter-row {
+      grid-template-columns: minmax(130px, 1fr) 92px repeat(3, auto);
+    }
+
+    .turning-counter-block {
+      display: grid;
+      gap: 8px;
+      padding: 10px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      background: #ffffff;
+    }
+
+    .turning-counter-head {
+      align-items: center;
+      display: grid;
+      gap: 8px;
+      grid-template-columns: minmax(120px, 1fr) auto;
+    }
+
+    .count-mode {
+      display: inline-flex;
+      gap: 4px;
+      padding: 3px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      background: #f8fafc;
+    }
+
+    .count-mode button {
+      min-height: 30px;
+      border: 0;
+      border-radius: 6px;
+      padding: 0 9px;
+      background: transparent;
+      color: #475569;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .count-mode button.active {
+      background: #2563eb;
+      color: #fff;
+    }
+
+    .turning-lane-list {
+      display: grid;
+      gap: 7px;
+    }
+
+    .turning-lane-row {
+      align-items: center;
+      display: grid;
+      gap: 8px;
+      grid-template-columns: minmax(110px, 1fr) 92px repeat(3, auto);
+      padding: 8px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      background: #f8fafc;
+    }
+
+    .turning-empty {
+      padding: 12px;
+      border: 1px dashed #cbd5e1;
+      border-radius: 8px;
+      background: #f8fafc;
+      color: #64748b;
+      font-size: 14px;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .counter-meta {
+      color: #64748b;
+      font-size: 12px;
+      font-weight: 700;
+      margin-top: 5px;
+    }
+
+    .section {
+      background: #fff;
+      border: 1px solid #dbe3ed;
+      border-radius: 8px;
+      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 14px;
+      background: #f8fafc;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #111827;
+    }
+
+    .section-body {
+      padding: 14px;
+    }
+
+    .counter-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .summary-strip {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .summary-item {
+      padding: 10px 12px;
+      border: 1px solid #dbe3ed;
+      border-radius: 8px;
+      background: #f8fafc;
+    }
+
+    .summary-label {
+      color: #64748b;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .summary-value {
+      margin-top: 3px;
+      color: #111827;
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .counter-row {
+      display: grid;
+      grid-template-columns: minmax(120px, 1fr) 92px repeat(3, auto);
+      align-items: center;
+      gap: 8px;
+      padding: 10px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .counter-name {
+      min-width: 0;
+      font-size: 18px;
+      font-weight: 700;
+      color: #111827;
+      word-break: break-word;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      min-height: 20px;
+      margin-top: 5px;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: #edf6ff;
+      color: #2563eb;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .count-input,
+    .field-input {
+      width: 100%;
+      height: 38px;
+      border: 2px solid #cbd5e1;
+      border-radius: 8px;
+      background: #fff;
+      color: #111827;
+      font-size: 16px;
+      outline: none;
+      padding: 0 12px;
+      transition: border-color 0.16s, box-shadow 0.16s;
+    }
+
+    .count-input {
+      border-color: #3182ce;
+      text-align: center;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .count-input:focus,
+    .field-input:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
+    }
+
+    .button {
+      min-height: 38px;
+      border: none;
+      border-radius: 8px;
+      padding: 0 12px;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: transform 0.12s, filter 0.12s;
+    }
+
+    .count-plus {
+      min-height: 46px;
+      min-width: 64px;
+      padding: 0 18px;
+      font-size: 19px;
+      border-radius: 10px;
+    }
+
+    .button:hover {
+      filter: brightness(0.97);
+    }
+
+    .button:active {
+      transform: translateY(1px);
+    }
+
+    .primary {
+      background: #2563eb;
+    }
+
+    .success {
+      background: #16803c;
+    }
+
+    .danger {
+      background: #dc2626;
+    }
+
+    .muted {
+      background: #64748b;
+    }
+
+    .purple {
+      background: #6d5bd0;
+    }
+
+    .add-area {
+      display: grid;
+      grid-template-columns: minmax(220px, 1fr) auto;
+      gap: 8px;
+      align-items: end;
+      padding: 10px;
+      border-radius: 8px;
+      background: #f8fafc;
+      border: 1px dashed #cbd5e1;
+    }
+
+    .field-group {
+      display: grid;
+      gap: 7px;
+    }
+
+    .field-label {
+      font-size: 14px;
+      color: #475569;
+      font-weight: 700;
+    }
+
+    .standard-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .preset-area {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .preset-button {
+      min-height: 36px;
+      padding: 0 12px;
+      border-radius: 8px;
+      border: 1px solid #b9c7d8;
+      background: #fff;
+      color: #1f2937;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .preset-button:disabled {
+      cursor: not-allowed;
+      opacity: 0.45;
+      background: #f1f5f9;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .convert-panel {
+      display: none;
+      padding-top: 4px;
+    }
+
+    .standard-buttons {
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+
+    .standard-buttons .active {
+      outline: 3px solid rgba(109, 91, 208, 0.25);
+      background: #4936b6;
+    }
+
+    .factor-table-wrap,
+    .result-box {
+      display: none;
+    }
+
+    .result-box {
+      margin-top: 14px;
+      padding: 14px;
+      border: 1px solid #bbf7d0;
+      border-radius: 8px;
+      background: #f0fdf4;
+      color: #166534;
+      text-align: center;
+      font-size: 24px;
+      font-weight: 800;
+    }
+
+    .import-notice {
+      display: none;
+      gap: 8px;
+      margin-bottom: 10px;
+      padding: 10px 12px;
+      border: 1px solid #bfdbfe;
+      border-radius: 8px;
+      background: #eff6ff;
+      color: #1e3a8a;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.5;
+    }
+
+    .import-notice small {
+      color: #475569;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .export-notice {
+      display: none;
+      gap: 8px;
+      margin-bottom: 10px;
+      padding: 10px 12px;
+      border: 1px solid #b8dfc4;
+      border-radius: 8px;
+      background: #eef9f2;
+      color: #14532d;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.5;
+    }
+
+    .export-notice a {
+      color: #145c63;
+      font-weight: 800;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    th,
+    td {
+      border: 1px solid #cbd5e1;
+      padding: 10px;
+      text-align: center;
+    }
+
+    th {
+      background: #eff6ff;
+      color: #1e3a8a;
+      font-weight: 800;
+    }
+
+    .details-content {
+      display: none;
+      padding: 0 18px 18px;
+    }
+
+    .module-note {
+      display: grid;
+      gap: 6px;
+      padding: 12px;
+      border: 1px dashed #b9c7d8;
+      border-radius: 8px;
+      background: #f8fafc;
+      color: #475569;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .module-note strong {
+      color: #111827;
+    }
+
+    .save-state {
+      color: #64748b;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .details-content table {
+      margin-top: 0;
+    }
+
+    @media (max-width: 620px) {
+      .summary-strip,
+      .counter-row,
+      .add-area,
+      .turning-config-grid,
+      .lane-config-row,
+      .turning-counter-head,
+      .turning-counter-row,
+      .turning-lane-row,
+      .manual-module-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .counter-row .button,
+      .add-area .button {
+        width: 100%;
+      }
+
+      .title {
+        font-size: 27px;
+      }
+
+      .counter-name {
+        font-size: 20px;
+      }
+
+      body {
+        padding: 12px;
+      }
+    }
+  </style>
+  <style>
+    :root {
+      color-scheme: dark;
+    }
+
+    body {
+      background:
+        radial-gradient(circle at top right, rgba(214, 175, 92, 0.16), transparent 34vw),
+        linear-gradient(180deg, #0b0b0d 0%, #151515 48%, #0b0b0d 100%);
+      color: #f7f3e8;
+    }
+
+    .manual-module-card,
+    .section-card,
+    .summary-card,
+    .counter-row,
+    .convert-section,
+    .table-wrapper,
+    .custom-box,
+    .turning-config,
+    .turning-counter-row,
+    .turning-summary,
+    .result-box,
+    .standard-buttons .button,
+    input,
+    select {
+      background: linear-gradient(180deg, #171717, #101010);
+      border-color: rgba(214, 175, 92, 0.36);
+      color: #f7f3e8;
+      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.22);
+    }
+
+    .title,
+    .section-title,
+    .counter-name,
+    .summary-value,
+    .manual-module-card strong,
+    label,
+    th,
+    h1,
+    h2,
+    h3 {
+      color: #fffaf0;
+    }
+
+    .subtitle,
+    .manual-module-card span,
+    .summary-label,
+    .counter-meta,
+    .hint,
+    .field-note,
+    td,
+    p {
+      color: #d4d0c5;
+    }
+
+    .counter-value,
+    .summary-value,
+    .lane-icon,
+    .imported-note,
+    a {
+      color: #f4d58d;
+    }
+
+    .manual-module-card.active,
+    .manual-module-card:hover,
+    input:focus,
+    select:focus {
+      background: rgba(214, 175, 92, 0.12);
+      border-color: #d6af5c;
+      box-shadow: 0 0 0 3px rgba(214, 175, 92, 0.16);
+    }
+
+    .button,
+    .button.primary,
+    .button.success,
+    .button.purple,
+    .count-plus,
+    .count-mode button.active {
+      background: linear-gradient(135deg, #d6af5c, #f4d58d);
+      color: #111111;
+      border-color: #d6af5c;
+    }
+
+    .button.muted,
+    .count-mode button,
+    .preset-button {
+      background: #111111;
+      border-color: rgba(214, 175, 92, 0.34);
+      color: #f4d58d;
+    }
+
+    .button.danger {
+      background: #2a1712;
+      color: #ffd7c2;
+    }
+
+    .badge,
+    .standard-note,
+    .export-notice,
+    .website-mode-note {
+      background: #17120a;
+      border-color: rgba(214, 175, 92, 0.42);
+      color: #f7e7ba;
+    }
+
+    table th {
+      background: #211a0c;
+      color: #f4d58d;
+    }
+
+    .section,
+    .section-header,
+    .summary-item,
+    .add-area,
+    .counter-list,
+    .table-box,
+    .details-content,
+    .turning-section,
+    .turning-panel,
+    .lane-config,
+    .lane-type-row,
+    .count-input,
+    .field-input {
+      background: linear-gradient(180deg, #171717, #101010) !important;
+      border-color: rgba(214, 175, 92, 0.36) !important;
+      color: #f7f3e8 !important;
+    }
+
+    .section-header {
+      border-bottom-color: rgba(214, 175, 92, 0.22) !important;
+    }
+  </style>
+  <style>
+    .export-notice,
+    button[onclick="exportManualExcel()"],
+    .convert-section,
+    .details-content,
+    button[onclick^="toggleTable"] {
+      display: none !important;
+    }
+
+    body::before {
+      display: none !important;
+    }
+
+    .website-mode-note {
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      border-radius: 12px;
+      color: #7c2d12;
+      line-height: 1.7;
+      margin: 0 auto 14px;
+      max-width: 980px;
+      padding: 12px 14px;
+    }
+
+    .web-disclaimer-note {
+      background: #fff8e6;
+      border: 1px solid #fde68a;
+      border-radius: 12px;
+      color: #7c4a03;
+      line-height: 1.7;
+      margin: 0 auto 14px;
+      max-width: 980px;
+      padding: 12px 14px;
+    }
+  </style>
+  <style>
+    :root {
+      color-scheme: light;
+    }
+
+    body {
+      background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.13), transparent 34vw),
+        linear-gradient(180deg, #f7fbff 0%, #eef5ff 52%, #ffffff 100%) !important;
+      color: #102033 !important;
+    }
+
+    .manual-module-card,
+    .section-card,
+    .summary-card,
+    .counter-row,
+    .convert-section,
+    .table-wrapper,
+    .custom-box,
+    .turning-config,
+    .turning-counter-row,
+    .turning-summary,
+    .result-box,
+    .standard-buttons .button,
+    .section,
+    .section-header,
+    .summary-item,
+    .add-area,
+    .counter-list,
+    .table-box,
+    .details-content,
+    .turning-section,
+    .turning-panel,
+    .lane-config,
+    .lane-type-row,
+    .count-input,
+    .field-input,
+    .lane-advanced,
+    .lane-config-row,
+    input,
+    select {
+      background: rgba(255, 255, 255, 0.96) !important;
+      border-color: #d7e6fb !important;
+      box-shadow: 0 14px 36px rgba(37, 99, 235, 0.08) !important;
+      color: #102033 !important;
+    }
+
+    .title,
+    .section-title,
+    .counter-name,
+    .summary-value,
+    .manual-module-card strong,
+    label,
+    th,
+    h1,
+    h2,
+    h3,
+    .lane-group-title,
+    .lane-config-row strong {
+      color: #0f2544 !important;
+    }
+
+    .subtitle,
+    .manual-module-card span,
+    .summary-label,
+    .counter-meta,
+    .hint,
+    .field-note,
+    td,
+    p,
+    .lane-advanced-note {
+      color: #516173 !important;
+    }
+
+    .counter-value,
+    .summary-value,
+    .lane-icon,
+    .imported-note,
+    a,
+    .module-badge,
+    .lane-advanced summary {
+      color: #2563eb !important;
+    }
+
+    .module-badge,
+    .standard-note,
+    .website-mode-note {
+      background: #eaf2ff !important;
+      border-color: #bfdbfe !important;
+      color: #1d4ed8 !important;
+    }
+
+    .export-notice {
+      background: #fff8e6 !important;
+      border-color: #fde68a !important;
+      color: #7c4a03 !important;
+    }
+
+    .manual-module-card.active,
+    .manual-module-card:hover,
+    input:focus,
+    select:focus {
+      background: #eaf2ff !important;
+      border-color: #2563eb !important;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14) !important;
+    }
+
+    .button,
+    .button.primary,
+    .button.success,
+    .button.purple,
+    .count-plus,
+    .count-mode button.active {
+      background: linear-gradient(135deg, #2563eb, #1d9bf0) !important;
+      border-color: #2563eb !important;
+      color: #ffffff !important;
+    }
+
+    .button.muted,
+    .count-mode button,
+    .preset-button {
+      background: #ffffff !important;
+      border-color: #c9dcf8 !important;
+      color: #2563eb !important;
+    }
+
+    .button.danger {
+      background: #fff8e6 !important;
+      border-color: #f59e0b !important;
+      color: #9a3412 !important;
+    }
+
+    table th {
+      background: #eaf2ff !important;
+      color: #1d4ed8 !important;
+    }
+
+    .section-header {
+      border-bottom-color: #d7e6fb !important;
+    }
+
+    .lane-icon.non-motor {
+      border-color: #16a34a !important;
+      color: #15803d !important;
+    }
+  .page-logo-text{color:#0f2544;font-size:24px;font-weight:900;text-align:center;margin:0 auto 10px;} `</style>
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <symbol id="icon-lane-left" viewBox="0 0 44 44">
+      <path d="M30 36 V19 C30 14.6 26.4 11 22 11 H11" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M14 4 4 11 14 18 Z" fill="currentColor"/>
+    </symbol>
+    <symbol id="icon-lane-right" viewBox="0 0 44 44">
+      <path d="M14 36 V19 C14 14.6 17.6 11 22 11 H33" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M30 4 40 11 30 18 Z" fill="currentColor"/>
+    </symbol>
+    <symbol id="icon-lane-through" viewBox="0 0 44 44">
+      <path d="M22 38 V10" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="round"/>
+      <path d="M22 2 11 15 H33 Z" fill="currentColor"/>
+    </symbol>
+    <symbol id="icon-lane-uturn" viewBox="0 0 44 44">
+      <path d="M30 36 V15 C30 9.5 25.5 5 20 5 H17 C11.5 5 7 9.5 7 15 V18" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M15 17 7 28 0 17 Z" fill="currentColor"/>
+    </symbol>
+    <symbol id="icon-lane-left-uturn" viewBox="0 0 64 64">
+      <path d="M47 56 V31 C47 23 40 16 32 16 H17" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M20 7 6 16 20 25 Z" fill="currentColor"/>
+      <path d="M34 56 V39 C34 31 28 25 20 25 H18 C13 25 9 29 9 34 V38" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M17 37 9 51 1 37 Z" fill="currentColor"/>
+    </symbol>
+    <symbol id="icon-lane-through-left" viewBox="0 0 52 52">
+      <path d="M32 45 V16" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round"/>
+      <path d="M32 6 21 19 H43 Z" fill="currentColor"/>
+      <path d="M32 27 C32 21 27 16 21 16 H11" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M14 9 4 16 14 23 Z" fill="currentColor"/>
+    </symbol>
+    <symbol id="icon-lane-through-right" viewBox="0 0 52 52">
+      <path d="M20 45 V16" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round"/>
+      <path d="M20 6 9 19 H31 Z" fill="currentColor"/>
+      <path d="M20 27 C20 21 25 16 31 16 H41" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M38 9 48 16 38 23 Z" fill="currentColor"/>
+    </symbol>
+    <symbol id="icon-lane-left-right" viewBox="0 0 52 52">
+      <path d="M26 45 V30 C26 22 20 16 12 16 H11" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M14 9 4 16 14 23 Z" fill="currentColor"/>
+      <path d="M26 30 C26 22 32 16 40 16 H41" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M38 9 48 16 38 23 Z" fill="currentColor"/>
+    </symbol>
+    <symbol id="icon-lane-through-left-right" viewBox="0 0 56 56">
+      <path d="M28 49 V14" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round"/>
+      <path d="M28 4 17 17 H39 Z" fill="currentColor"/>
+      <path d="M28 29 C28 22 23 17 16 17 H11" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M14 10 4 17 14 24 Z" fill="currentColor"/>
+      <path d="M28 29 C28 22 33 17 40 17 H45" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M42 10 52 17 42 24 Z" fill="currentColor"/>
+    </symbol>
+  </svg>
+  <main class="app">
+    <nav class="module-nav manual-module-nav" aria-label="模块导航">
+      <a href="./index.html">网站首页</a>
+      <a href="./manual-counter.html">网页版人工计数器</a>
+      <a href="./support.html">支持我们 / 打赏</a>
+      <a href="https://github.com/15611434697lsr/-/releases/latest/download/trafficcounter.zip">下载本地软件</a>
+    </nav>
+    <div class="page-logo-text">智京交通计数器</div>
+    <h1 class="title">智京交通计数器 v0.9.0-beta</h1>
+    <p class="subtitle">断面交通量计数、交叉口转向调查扩展</p>
+    <p class="website-mode-note">网站版保留程序版人工计数器的主要使用功能，但不支持 Excel 数据导出和标准交通量换算；视频识别、车速估计和完整数据处理请下载本地软件。</p>
+    <p class="web-disclaimer-note">免责声明：本页面仅作为交通调查辅助记录工具，计数结果可能受人工操作、浏览器状态、设备性能和调查口径影响而产生误差。正式使用前请结合现场记录和人工复核。</p>
+
+    <section class="manual-module-grid" aria-label="人工计数模块">
+      <button class="manual-module-card active" id="trafficVolumeTab" type="button" onclick="selectManualModule('trafficVolume')">
+        <strong>断面交通量计数</strong>
+        <span>车辆分类计数、人工校核、自定义字段</span>
+      </button>
+      <button class="manual-module-card" id="turningMovementTab" type="button" onclick="selectManualModule('turningMovement')">
+        <strong>交叉口转向交通量计数</strong>
+        <span>按进口道方向、转向车道和非机动车道统计</span>
+      </button>
+    </section>
+
+    <div class="module-view" id="trafficVolumeModule">
+
+    <section class="section">
+      <div class="section-header">
+        <div class="section-title">断面交通量计数</div>
+        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: flex-end;">
+          <span class="save-state" id="saveState">已自动保存</span>
+          <button class="button primary" type="button" onclick="exportManualExcel()">导出 Excel</button>
+          <button class="button muted" type="button" onclick="clearAll()">清空全部数据</button>
+        </div>
+      </div>
+      <div class="section-body">
+        <div class="summary-strip">
+          <div class="summary-item">
+            <div class="summary-label">当前总计数</div>
+            <div class="summary-value" id="summaryTotal">0</div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-label">预设车型</div>
+            <div class="summary-value" id="summaryPreset">0</div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-label">自定义字段</div>
+            <div class="summary-value" id="summaryCustom">0</div>
+          </div>
+        </div>
+        <div class="import-notice" id="importNotice"></div>
+        <div class="export-notice" id="exportNotice"></div>
+        <div class="counter-list" id="counterList"></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header">
+        <div class="section-title">计数项管理</div>
+      </div>
+      <div class="section-body">
+        <label class="field-group">
+          <span class="field-label">常用车型</span>
+          <div class="preset-area" id="presetArea"></div>
+        </label>
+        <div class="add-area">
+          <label class="field-group">
+            <span class="field-label">自定义字段</span>
+            <input class="field-input" id="customName" type="text" placeholder="例如：电动车、行人、施工车辆" onkeydown="handleCustomKey(event)">
+          </label>
+          <button class="button success" type="button" onclick="addCustomCounter()">添加字段</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header" onclick="toggleConvert()">
+        <div class="section-title">标准交通量换算</div>
+        <button class="button purple" id="toggleText" type="button">展开换算功能</button>
+      </div>
+      <div class="section-body convert-panel" id="convertContent">
+        <div class="standard-buttons">
+          <button class="button purple standard-btn" type="button" onclick="selectStandard('road', event)">公路标准</button>
+          <button class="button purple standard-btn" type="button" onclick="selectStandard('city', event)">城市道路标准</button>
+        </div>
+
+        <div class="factor-table-wrap" id="factorBox">
+          <table id="factorTable"></table>
+        </div>
+
+        <div class="toolbar" style="margin-top: 16px; margin-bottom: 0;">
+          <button class="button primary" id="confirmButton" type="button" onclick="calcConvert()" style="display: none;">确认换算</button>
+        </div>
+
+        <div class="result-box" id="resultBox"></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header">
+        <div class="section-title">城市道路工程设计规范</div>
+        <button class="button primary" type="button" onclick="toggleTable('cityTableBox')">查看车辆外廓尺寸表</button>
+      </div>
+      <div class="details-content" id="cityTableBox">
+        <table>
+          <thead>
+            <tr>
+              <th>车辆类型</th>
+              <th>总长(m)</th>
+              <th>总宽(m)</th>
+              <th>总高(m)</th>
+              <th>前悬(m)</th>
+              <th>轴距(m)</th>
+              <th>后悬(m)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>小客车</td>
+              <td>6.0</td>
+              <td>1.8</td>
+              <td>2.0</td>
+              <td>0.8</td>
+              <td>3.8</td>
+              <td>1.4</td>
+            </tr>
+            <tr>
+              <td>大型车</td>
+              <td>12.0</td>
+              <td>2.5</td>
+              <td>4.0</td>
+              <td>1.5</td>
+              <td>6.5</td>
+              <td>4.0</td>
+            </tr>
+            <tr>
+              <td>铰接车</td>
+              <td>18.0</td>
+              <td>2.5</td>
+              <td>4.0</td>
+              <td>1.7</td>
+              <td>5.8+6.7</td>
+              <td>3.8</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header">
+        <div class="section-title">公路工程技术标准</div>
+        <button class="button primary" type="button" onclick="toggleTable('roadTableBox')">查看设计车辆外廓尺寸表</button>
+      </div>
+      <div class="details-content" id="roadTableBox">
+        <table>
+          <thead>
+            <tr>
+              <th>车辆类型</th>
+              <th>总长(m)</th>
+              <th>总宽(m)</th>
+              <th>总高(m)</th>
+              <th>前悬(m)</th>
+              <th>轴距(m)</th>
+              <th>后悬(m)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>小客车</td>
+              <td>6.0</td>
+              <td>1.8</td>
+              <td>2.0</td>
+              <td>0.8</td>
+              <td>3.8</td>
+              <td>1.4</td>
+            </tr>
+            <tr>
+              <td>大型客车</td>
+              <td>13.7</td>
+              <td>2.55</td>
+              <td>4.0</td>
+              <td>2.6</td>
+              <td>6.5+1.5</td>
+              <td>3.1</td>
+            </tr>
+            <tr>
+              <td>铰接客车</td>
+              <td>18.0</td>
+              <td>2.5</td>
+              <td>4.0</td>
+              <td>1.7</td>
+              <td>5.8+6.7</td>
+              <td>3.8</td>
+            </tr>
+            <tr>
+              <td>载重汽车</td>
+              <td>12.0</td>
+              <td>2.5</td>
+              <td>4.0</td>
+              <td>1.5</td>
+              <td>6.5</td>
+              <td>4.0</td>
+            </tr>
+            <tr>
+              <td>铰接列车</td>
+              <td>18.1</td>
+              <td>2.55</td>
+              <td>4.0</td>
+              <td>1.5</td>
+              <td>3.3+11.0</td>
+              <td>2.3</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    </div>
+
+    <div class="module-view" id="turningMovementModule" hidden>
+      <section class="section">
+        <div class="section-header">
+          <div class="section-title">进口道与车道配置</div>
+          <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: flex-end;">
+            <button class="button primary" type="button" onclick="exportManualExcel()">导出 Excel</button>
+            <button class="button muted" type="button" onclick="resetTurningMovement()">清空交叉口计数</button>
+          </div>
+        </div>
+        <div class="section-body">
+          <div class="turning-config-grid">
+            <label class="field-group">
+              <span class="field-label">进口道行驶方向</span>
+              <select class="field-input" id="approachDirection" onchange="updateTurningDirection(this.value)">
+                <option value="东至西">东至西</option>
+                <option value="西至东">西至东</option>
+                <option value="南至北">南至北</option>
+                <option value="北至南">北至南</option>
+                <option value="东北至西南">东北至西南</option>
+                <option value="西南至东北">西南至东北</option>
+                <option value="西北至东南">西北至东南</option>
+                <option value="东南至西北">东南至西北</option>
+              </select>
+            </label>
+
+            <div class="lane-config-grid" aria-label="车道组成">
+              <div class="lane-group-title">常用车道</div>
+              <div class="lane-config-row">
+                <strong class="lane-label-inline"><svg class="lane-icon" aria-hidden="true"><use href="#icon-lane-left"></use></svg>左转车道</strong>
+                <input class="lane-count-input" id="lane-left" type="number" min="0" max="12" value="1" oninput="updateTurningLaneCount('left', this.value)" onchange="updateTurningLaneCount('left', this.value)">
+              </div>
+              <div class="lane-config-row">
+                <strong class="lane-label-inline"><svg class="lane-icon" aria-hidden="true"><use href="#icon-lane-uturn"></use></svg>掉头车道</strong>
+                <input class="lane-count-input" id="lane-uturn" type="number" min="0" max="12" value="0" oninput="updateTurningLaneCount('uturn', this.value)" onchange="updateTurningLaneCount('uturn', this.value)">
+              </div>
+              <div class="lane-config-row">
+                <strong class="lane-label-inline"><svg class="lane-icon" aria-hidden="true"><use href="#icon-lane-through"></use></svg>直行车道</strong>
+                <input class="lane-count-input" id="lane-through" type="number" min="0" max="12" value="1" oninput="updateTurningLaneCount('through', this.value)" onchange="updateTurningLaneCount('through', this.value)">
+              </div>
+              <div class="lane-config-row">
+                <strong class="lane-label-inline"><svg class="lane-icon" aria-hidden="true"><use href="#icon-lane-right"></use></svg>右转车道</strong>
+                <input class="lane-count-input" id="lane-right" type="number" min="0" max="12" value="1" oninput="updateTurningLaneCount('right', this.value)" onchange="updateTurningLaneCount('right', this.value)">
+              </div>
+              <div class="lane-config-row">
+                <strong class="lane-label-inline"><span class="lane-icon non-motor">非</span>非机动车道</strong>
+                <input class="lane-count-input" id="lane-nonMotor" type="number" min="0" max="12" value="1" oninput="updateTurningLaneCount('nonMotor', this.value)" onchange="updateTurningLaneCount('nonMotor', this.value)">
+              </div>
+
+              <details class="lane-advanced">
+                <summary>组合车道（二级选项）</summary>
+                <div class="lane-advanced-body">
+                  <div class="lane-advanced-note">道路存在复合箭头车道时再填写；没有的保持 0。</div>
+              <div class="lane-config-row">
+                <strong class="lane-label-inline"><svg class="lane-icon combo" aria-hidden="true"><use href="#icon-lane-left-uturn"></use></svg>左转掉头混合车道</strong>
+                <input class="lane-count-input" id="lane-leftUturn" type="number" min="0" max="12" value="0" oninput="updateTurningLaneCount('leftUturn', this.value)" onchange="updateTurningLaneCount('leftUturn', this.value)">
+              </div>
+              <div class="lane-config-row">
+                <strong class="lane-label-inline"><svg class="lane-icon combo" aria-hidden="true"><use href="#icon-lane-through-left"></use></svg>直行左转混合车道</strong>
+                <input class="lane-count-input" id="lane-throughLeft" type="number" min="0" max="12" value="0" oninput="updateTurningLaneCount('throughLeft', this.value)" onchange="updateTurningLaneCount('throughLeft', this.value)">
+              </div>
+              <div class="lane-config-row">
+                <strong class="lane-label-inline"><svg class="lane-icon combo" aria-hidden="true"><use href="#icon-lane-through-right"></use></svg>直行右转混合车道</strong>
+                <input class="lane-count-input" id="lane-throughRight" type="number" min="0" max="12" value="0" oninput="updateTurningLaneCount('throughRight', this.value)" onchange="updateTurningLaneCount('throughRight', this.value)">
+              </div>
+              <div class="lane-config-row">
+                <strong class="lane-label-inline"><svg class="lane-icon combo" aria-hidden="true"><use href="#icon-lane-left-right"></use></svg>左转右转混合车道</strong>
+                <input class="lane-count-input" id="lane-leftRight" type="number" min="0" max="12" value="0" oninput="updateTurningLaneCount('leftRight', this.value)" onchange="updateTurningLaneCount('leftRight', this.value)">
+              </div>
+              <div class="lane-config-row">
+                <strong class="lane-label-inline"><svg class="lane-icon combo" aria-hidden="true"><use href="#icon-lane-through-left-right"></use></svg>直行左转右转混合车道</strong>
+                <input class="lane-count-input" id="lane-throughLeftRight" type="number" min="0" max="12" value="0" oninput="updateTurningLaneCount('throughLeftRight', this.value)" onchange="updateTurningLaneCount('throughLeftRight', this.value)">
+              </div>
+                </div>
+              </details>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-header">
+          <div class="section-title">转向交通量计数</div>
+          <span class="save-state" id="turningSaveState">已自动保存</span>
+        </div>
+        <div class="section-body">
+          <div class="export-notice" id="turningExportNotice"></div>
+          <div class="summary-strip">
+            <div class="summary-item">
+              <div class="summary-label">当前进口道</div>
+              <div class="summary-value" id="turningDirectionSummary">东至西</div>
+            </div>
+            <div class="summary-item">
+              <div class="summary-label">机动车转向合计</div>
+              <div class="summary-value" id="turningMotorTotal">0</div>
+            </div>
+            <div class="summary-item">
+              <div class="summary-label">非机动车合计</div>
+              <div class="summary-value" id="turningNonMotorTotal">0</div>
+            </div>
+          </div>
+          <div class="counter-list" id="turningCounterList"></div>
+        </div>
+      </section>
+    </div>
+
+  </main>
+
+  <script>
+    const STORAGE_KEY = "trafficCounterV13";
+    const TURNING_STORAGE_KEY = "turningMovementCounterV1";
+    const VIDEO_IMPORT_KEY = "trafficCounterVideoImportV1";
+    const ROAD_STANDARD_NAMES = ["小客车", "大型客车", "铰接客车", "载重汽车", "铰接列车"];
+    const TURNING_TYPES = [
+      { key: "left", name: "左转", laneLabel: "左转车道", motor: true },
+      { key: "uturn", name: "掉头", laneLabel: "掉头车道", motor: true },
+      { key: "through", name: "直行", laneLabel: "直行车道", motor: true },
+      { key: "right", name: "右转", laneLabel: "右转车道", motor: true },
+      { key: "nonMotor", name: "非机动车", laneLabel: "非机动车道", motor: false }
+    ];
+    const TURNING_LANE_TYPES = [
+      { key: "left", name: "左转车道" },
+      { key: "leftUturn", name: "左转掉头混合车道" },
+      { key: "throughLeft", name: "直行左转混合车道" },
+      { key: "throughRight", name: "直行右转混合车道" },
+      { key: "leftRight", name: "左转右转混合车道" },
+      { key: "throughLeftRight", name: "直行左转右转混合车道" },
+      { key: "uturn", name: "掉头车道" },
+      { key: "through", name: "直行车道" },
+      { key: "right", name: "右转车道" },
+      { key: "nonMotor", name: "非机动车道" }
+    ];
+    const presetCounters = [
+      { name: "小客车", road: 1.0, city: 1.0, selectable: true },
+      { name: "大型客车", road: 1.5, city: 2.0, selectable: true },
+      { name: "铰接客车", road: 4.0, city: 3.0, selectable: true },
+      { name: "载重汽车", road: 2.5, city: 2.5, selectable: true },
+      { name: "铰接列车", road: 4.0, city: 3.0, selectable: true },
+      { name: "非机动车", road: 0.2, city: 0.2, selectable: true }
+    ];
+
+    let counters = [
+      { name: "小客车", count: 0, road: 1.0, city: 1.0, custom: false }
+    ];
+    let turningMovement = {
+      direction: "东至西",
+      lanes: {
+        left: 1,
+        leftUturn: 0,
+        throughLeft: 0,
+        throughRight: 0,
+        leftRight: 0,
+        throughLeftRight: 0,
+        uturn: 0,
+        through: 1,
+        right: 1,
+        nonMotor: 1
+      },
+      counts: {
+        left: 0,
+        uturn: 0,
+        through: 0,
+        right: 0,
+        nonMotor: 0
+      },
+      countModes: {
+        left: "merged",
+        uturn: "merged",
+        through: "merged",
+        right: "merged",
+        nonMotor: "merged"
+      },
+      laneCounts: {
+        left: [],
+        uturn: [],
+        through: [],
+        right: [],
+        nonMotor: []
+      }
+    };
+    let currentStandard = "";
+    let convertOpen = false;
+
+    function selectManualModule(moduleName) {
+      const trafficActive = moduleName === "trafficVolume";
+      document.getElementById("trafficVolumeModule").hidden = !trafficActive;
+      document.getElementById("turningMovementModule").hidden = trafficActive;
+      document.getElementById("trafficVolumeTab").classList.toggle("active", trafficActive);
+      document.getElementById("turningMovementTab").classList.toggle("active", !trafficActive);
+    }
+
+    function normalizeName(name) {
+      return name.trim().replace(/\s+/g, " ");
+    }
+
+    function getCounter(name) {
+      return counters.find(item => item.name === name);
+    }
+
+    function saveTurningMovement() {
+      localStorage.setItem(TURNING_STORAGE_KEY, JSON.stringify(turningMovement));
+      const state = document.getElementById("turningSaveState");
+      if (state) state.innerText = "已自动保存";
+    }
+
+    function loadTurningMovement() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(TURNING_STORAGE_KEY) || "null");
+        if (!saved || typeof saved !== "object") return;
+        turningMovement.direction = typeof saved.direction === "string" ? saved.direction : "东至西";
+        TURNING_LANE_TYPES.forEach(type => {
+          turningMovement.lanes[type.key] = clampLaneCount(saved.lanes?.[type.key]);
+        });
+        TURNING_TYPES.forEach(type => {
+          turningMovement.counts[type.key] = Math.max(0, parseInt(saved.counts?.[type.key], 10) || 0);
+          turningMovement.countModes[type.key] = saved.countModes?.[type.key] === "split" ? "split" : "merged";
+          const savedLaneCounts = Array.isArray(saved.laneCounts?.[type.key]) ? saved.laneCounts[type.key] : [];
+          turningMovement.laneCounts[type.key] = savedLaneCounts.map(value => Math.max(0, parseInt(value, 10) || 0));
+        });
+        normalizeTurningLaneCounts();
+      } catch (error) {
+        localStorage.removeItem(TURNING_STORAGE_KEY);
+      }
+    }
+
+    function clampLaneCount(value) {
+      return Math.max(0, Math.min(12, parseInt(value, 10) || 0));
+    }
+
+    function updateTurningDirection(value) {
+      turningMovement.direction = value || "东至西";
+      renderTurningMovement();
+    }
+
+    function updateTurningLaneCount(key, value) {
+      if (!TURNING_LANE_TYPES.some(type => type.key === key)) return;
+      turningMovement.lanes[key] = clampLaneCount(value);
+      normalizeTurningLaneCounts();
+      renderTurningMovement();
+    }
+
+    function syncTurningCount(key, value) {
+      if (!TURNING_TYPES.some(type => type.key === key)) return;
+      turningMovement.counts[key] = Math.max(0, parseInt(value, 10) || 0);
+      renderTurningMovement();
+    }
+
+    function addTurningCount(key) {
+      if (!TURNING_TYPES.some(type => type.key === key)) return;
+      turningMovement.counts[key] += 1;
+      renderTurningMovement();
+    }
+
+    function subtractTurningCount(key) {
+      if (!TURNING_TYPES.some(type => type.key === key)) return;
+      turningMovement.counts[key] = Math.max(0, turningMovement.counts[key] - 1);
+      renderTurningMovement();
+    }
+
+    function clearTurningCount(key) {
+      if (!TURNING_TYPES.some(type => type.key === key)) return;
+      turningMovement.counts[key] = 0;
+      turningMovement.laneCounts[key] = [];
+      renderTurningMovement();
+    }
+
+    function resetTurningMovement() {
+      const total = totalTurningCount();
+      if (total > 0 && !confirm("确定要清空当前交叉口转向计数吗？")) return;
+      TURNING_TYPES.forEach(type => {
+        turningMovement.counts[type.key] = 0;
+        turningMovement.laneCounts[type.key] = [];
+      });
+      renderTurningMovement();
+    }
+
+    function setTurningCountMode(key, mode) {
+      if (!TURNING_TYPES.some(type => type.key === key)) return;
+      turningMovement.countModes[key] = mode === "split" ? "split" : "merged";
+      normalizeTurningLaneCounts();
+      renderTurningMovement();
+    }
+
+    function syncTurningLaneCount(key, index, value) {
+      if (!TURNING_TYPES.some(type => type.key === key)) return;
+      normalizeTurningLaneCounts();
+      turningMovement.laneCounts[key][index] = Math.max(0, parseInt(value, 10) || 0);
+      renderTurningMovement();
+    }
+
+    function addTurningLaneCount(key, index) {
+      if (!TURNING_TYPES.some(type => type.key === key)) return;
+      normalizeTurningLaneCounts();
+      turningMovement.laneCounts[key][index] = (turningMovement.laneCounts[key][index] || 0) + 1;
+      renderTurningMovement();
+    }
+
+    function subtractTurningLaneCount(key, index) {
+      if (!TURNING_TYPES.some(type => type.key === key)) return;
+      normalizeTurningLaneCounts();
+      turningMovement.laneCounts[key][index] = Math.max(0, (turningMovement.laneCounts[key][index] || 0) - 1);
+      renderTurningMovement();
+    }
+
+    function clearTurningLaneCount(key, index) {
+      if (!TURNING_TYPES.some(type => type.key === key)) return;
+      normalizeTurningLaneCounts();
+      turningMovement.laneCounts[key][index] = 0;
+      renderTurningMovement();
+    }
+
+    function renderTurningMovement() {
+      const directionInput = document.getElementById("approachDirection");
+      if (directionInput) directionInput.value = turningMovement.direction;
+      TURNING_LANE_TYPES.forEach(type => {
+        const input = document.getElementById(`lane-${type.key}`);
+        if (input) input.value = turningMovement.lanes[type.key];
+      });
+
+      const list = document.getElementById("turningCounterList");
+      if (list) {
+        const activeTypes = TURNING_TYPES.filter(type => effectiveTurningLaneCount(type.key) > 0);
+        list.innerHTML = activeTypes.length ? activeTypes.map(type => {
+          const laneCount = effectiveTurningLaneCount(type.key);
+          const mode = turningMovement.countModes[type.key] || "merged";
+          const count = turningTypeTotal(type.key);
+          const average = laneCount > 0 ? (count / laneCount).toFixed(1) : "0.0";
+          const laneDetail = turningLaneDetail(type.key);
+          const modeButtons = laneCount > 1 ? `
+            <div class="count-mode" aria-label="${escapeAttr(type.name)}计数方式">
+              <button class="${mode === "merged" ? "active" : ""}" type="button" onclick="setTurningCountMode('${type.key}', 'merged')">合并</button>
+              <button class="${mode === "split" ? "active" : ""}" type="button" onclick="setTurningCountMode('${type.key}', 'split')">分车道</button>
+            </div>
+          ` : "";
+          const counterBody = mode === "split" && laneCount > 1
+            ? renderTurningLaneRows(type, laneCount)
+            : renderTurningMergedRow(type, count);
+          return `
+            <div class="turning-counter-block">
+              <div class="turning-counter-head">
+                <div>
+                <div class="counter-name">${escapeHtml(type.name)}</div>
+                <div class="counter-meta">${escapeHtml(turningMovement.direction)} · 有效车道 ${laneCount} 条 · ${escapeHtml(laneDetail)} · 平均 ${average} 辆/车道</div>
+              </div>
+                ${modeButtons}
+              </div>
+              ${counterBody}
+            </div>
+          `;
+        }).join("") : `<div class="turning-empty">请先在上方填写至少一种车道数量。</div>`;
+      }
+
+      const motorTotal = TURNING_TYPES
+        .filter(type => type.motor)
+        .reduce((sum, type) => sum + turningTypeTotal(type.key), 0);
+      const nonMotorTotal = turningTypeTotal("nonMotor");
+      document.getElementById("turningDirectionSummary").innerText = turningMovement.direction;
+      document.getElementById("turningMotorTotal").innerText = motorTotal;
+      document.getElementById("turningNonMotorTotal").innerText = nonMotorTotal;
+      saveTurningMovement();
+    }
+
+    function renderTurningMergedRow(type, count) {
+      return `
+        <div class="counter-row turning-counter-row">
+          <div class="counter-meta">合并计数</div>
+          <input class="count-input" type="number" min="0" value="${count}" onchange="syncTurningCount('${type.key}', this.value)">
+          <button class="button primary count-plus" type="button" onclick="addTurningCount('${type.key}')">+1</button>
+          <button class="button muted" type="button" onclick="subtractTurningCount('${type.key}')">-1</button>
+          <button class="button danger" type="button" onclick="clearTurningCount('${type.key}')">清空</button>
+        </div>
+      `;
+    }
+
+    function renderTurningLaneRows(type, laneCount) {
+      normalizeTurningLaneCounts();
+      const rows = Array.from({ length: laneCount }, (_, index) => {
+        const value = turningMovement.laneCounts[type.key][index] || 0;
+        return `
+          <div class="turning-lane-row">
+            <div class="counter-meta">车道 ${index + 1}</div>
+            <input class="count-input" type="number" min="0" value="${value}" onchange="syncTurningLaneCount('${type.key}', ${index}, this.value)">
+            <button class="button primary count-plus" type="button" onclick="addTurningLaneCount('${type.key}', ${index})">+1</button>
+            <button class="button muted" type="button" onclick="subtractTurningLaneCount('${type.key}', ${index})">-1</button>
+            <button class="button danger" type="button" onclick="clearTurningLaneCount('${type.key}', ${index})">清空</button>
+          </div>
+        `;
+      }).join("");
+      return `<div class="turning-lane-list">${rows}</div>`;
+    }
+
+    function effectiveTurningLaneCount(key) {
+      const lanes = turningMovement.lanes;
+      if (key === "left") {
+        return (lanes.left || 0) + (lanes.leftUturn || 0) + (lanes.throughLeft || 0)
+          + (lanes.leftRight || 0) + (lanes.throughLeftRight || 0);
+      }
+      if (key === "uturn") return (lanes.uturn || 0) + (lanes.leftUturn || 0);
+      if (key === "through") {
+        return (lanes.through || 0) + (lanes.throughLeft || 0)
+          + (lanes.throughRight || 0) + (lanes.throughLeftRight || 0);
+      }
+      if (key === "right") {
+        return (lanes.right || 0) + (lanes.throughRight || 0)
+          + (lanes.leftRight || 0) + (lanes.throughLeftRight || 0);
+      }
+      if (key === "nonMotor") return lanes.nonMotor || 0;
+      return 0;
+    }
+
+    function normalizeTurningLaneCounts() {
+      TURNING_TYPES.forEach(type => {
+        const laneCount = effectiveTurningLaneCount(type.key);
+        const current = Array.isArray(turningMovement.laneCounts[type.key]) ? turningMovement.laneCounts[type.key] : [];
+        turningMovement.laneCounts[type.key] = Array.from({ length: laneCount }, (_, index) =>
+          Math.max(0, parseInt(current[index], 10) || 0)
+        );
+        if (laneCount <= 1 && turningMovement.countModes[type.key] === "split") {
+          turningMovement.countModes[type.key] = "merged";
+        }
+      });
+    }
+
+    function turningTypeTotal(key) {
+      if (turningMovement.countModes[key] === "split") {
+        normalizeTurningLaneCounts();
+        return turningMovement.laneCounts[key].reduce((sum, value) => sum + (parseInt(value, 10) || 0), 0);
+      }
+      return Math.max(0, parseInt(turningMovement.counts[key], 10) || 0);
+    }
+
+    function totalTurningCount() {
+      return TURNING_TYPES.reduce((sum, type) => sum + turningTypeTotal(type.key), 0);
+    }
+
+    function turningLaneDetail(key) {
+      const lanes = turningMovement.lanes;
+      if (key === "left") {
+        return `左转${lanes.left || 0}，左转掉头${lanes.leftUturn || 0}，直行左转${lanes.throughLeft || 0}，左转右转${lanes.leftRight || 0}，直行左转右转${lanes.throughLeftRight || 0}`;
+      }
+      if (key === "uturn") {
+        return `掉头${lanes.uturn || 0}，左转掉头${lanes.leftUturn || 0}`;
+      }
+      if (key === "through") {
+        return `直行${lanes.through || 0}，直行左转${lanes.throughLeft || 0}，直行右转${lanes.throughRight || 0}，直行左转右转${lanes.throughLeftRight || 0}`;
+      }
+      if (key === "right") {
+        return `右转${lanes.right || 0}，直行右转${lanes.throughRight || 0}，左转右转${lanes.leftRight || 0}，直行左转右转${lanes.throughLeftRight || 0}`;
+      }
+      if (key === "nonMotor") return `非机动车道${lanes.nonMotor || 0}`;
+      return "";
+    }
+
+    function saveData() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(counters));
+      const state = document.getElementById("saveState");
+      if (state) state.innerText = "已自动保存";
+    }
+
+    function loadData() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
+        if (!Array.isArray(saved) || saved.length === 0) return;
+        counters = saved
+          .filter(item => item && typeof item.name === "string")
+          .map(item => ({
+            name: item.name,
+            count: Math.max(0, parseInt(item.count, 10) || 0),
+            road: Number(item.road) || 0,
+            city: Number(item.city) || 0,
+            custom: Boolean(item.custom)
+          }));
+      } catch (error) {
+        localStorage.removeItem(STORAGE_KEY);
+      }
+    }
+
+    function updateSummary() {
+      const total = counters.reduce((sum, item) => sum + item.count, 0);
+      const presetCount = counters.filter(item => !item.custom).length;
+      const customCount = counters.filter(item => item.custom).length;
+      document.getElementById("summaryTotal").innerText = total;
+      document.getElementById("summaryPreset").innerText = presetCount;
+      document.getElementById("summaryCustom").innerText = customCount;
+    }
+
+    function renderCounters() {
+      const list = document.getElementById("counterList");
+      list.innerHTML = counters.map(item => `
+        <div class="counter-row" data-name="${escapeAttr(item.name)}">
+          <div>
+            <div class="counter-name">${escapeHtml(item.name)}</div>
+            ${item.custom ? '<div class="tag">自定义字段</div>' : '<div class="tag">预设车型</div>'}
+          </div>
+          <input class="count-input" type="number" min="0" value="${item.count}" onchange="syncData('${escapeJs(item.name)}', this.value)">
+          <button class="button primary count-plus" type="button" onclick="addOne('${escapeJs(item.name)}')">+1</button>
+          <button class="button muted" type="button" onclick="clearOne('${escapeJs(item.name)}')">清空</button>
+          <button class="button danger" type="button" onclick="removeCounter('${escapeJs(item.name)}')">移除</button>
+        </div>
+      `).join("");
+      updateSummary();
+      renderPresetButtons();
+      saveData();
+      hideResult();
+      if (currentStandard) renderFactorTable();
+    }
+
+    function renderPresetButtons() {
+      const area = document.getElementById("presetArea");
+      area.innerHTML = presetCounters.filter(item => item.selectable).map(item => {
+        const exists = Boolean(getCounter(item.name));
+        return `<button class="preset-button" type="button" ${exists ? "disabled" : ""} onclick="addPresetCounter('${escapeJs(item.name)}')">${escapeHtml(item.name)}</button>`;
+      }).join("");
+    }
+
+    function addPresetCounter(name) {
+      if (getCounter(name)) return;
+      const preset = presetCounters.find(item => item.name === name);
+      if (!preset) return;
+      counters.push({ name: preset.name, count: 0, road: preset.road, city: preset.city, custom: false });
+      renderCounters();
+    }
+
+    function handleCustomKey(event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        addCustomCounter();
+      }
+    }
+
+    function addCustomCounter() {
+      const nameInput = document.getElementById("customName");
+      const name = normalizeName(nameInput.value);
+
+      if (!name) {
+        alert("请输入自定义字段名称。");
+        nameInput.focus();
+        return;
+      }
+
+      if (getCounter(name)) {
+        alert("这个字段已经存在。");
+        nameInput.focus();
+        return;
+      }
+
+      counters.push({
+        name,
+        count: 0,
+        road: 0,
+        city: 0,
+        custom: true
+      });
+
+      nameInput.value = "";
+      renderCounters();
+    }
+
+    function syncData(name, value) {
+      const item = getCounter(name);
+      if (!item) return;
+      item.count = Math.max(0, parseInt(value, 10) || 0);
+      renderCounters();
+    }
+
+    function addOne(name) {
+      const item = getCounter(name);
+      if (!item) return;
+      item.count += 1;
+      renderCounters();
+    }
+
+    function clearOne(name) {
+      const item = getCounter(name);
+      if (!item) return;
+      item.count = 0;
+      renderCounters();
+    }
+
+    function removeCounter(name) {
+      if (!confirm("确定要移除此计数器吗？")) return;
+      counters = counters.filter(item => item.name !== name);
+      renderCounters();
+    }
+
+    function clearAll() {
+      const total = counters.reduce((sum, item) => sum + item.count, 0);
+      if (total > 0 && !confirm("确定要清空全部计数吗？")) return;
+      counters.forEach(item => {
+        item.count = 0;
+      });
+      renderCounters();
+    }
+
+    function handlePendingVideoImport() {
+      const raw = localStorage.getItem(VIDEO_IMPORT_KEY);
+      if (!raw) return;
+
+      let payload = null;
+      try {
+        payload = JSON.parse(raw);
+      } catch (error) {
+        localStorage.removeItem(VIDEO_IMPORT_KEY);
+        return;
+      }
+
+      const counts = payload && payload.counts && typeof payload.counts === "object" ? payload.counts : null;
+      if (!counts) {
+        localStorage.removeItem(VIDEO_IMPORT_KEY);
+        return;
+      }
+
+      const fromVideoButton = new URLSearchParams(window.location.search).get("import") === "video";
+      const summary = ROAD_STANDARD_NAMES
+        .map(name => `${name}：${Math.max(0, parseInt(counts[name], 10) || 0)}`)
+        .join("\\n");
+      const shouldImport = fromVideoButton || confirm(
+        "检测到视频识别精确分类结果，是否导入到人工计数器？\\n\\n" +
+        summary +
+        "\\n\\n导入后会覆盖预设车型数量，自定义字段会保留。"
+      );
+      localStorage.removeItem(VIDEO_IMPORT_KEY);
+      if (!shouldImport) return;
+
+      importVideoCounts(counts);
+      showImportNotice(payload);
+    }
+
+    function importVideoCounts(counts) {
+      const customCounters = counters.filter(item => item.custom);
+      const importedCounters = ROAD_STANDARD_NAMES.map(name => {
+        const preset = presetCounters.find(item => item.name === name);
+        return {
+          name,
+          count: Math.max(0, parseInt(counts[name], 10) || 0),
+          road: preset ? preset.road : 0,
+          city: preset ? preset.city : 0,
+          custom: false
+        };
+      });
+      counters = [...importedCounters, ...customCounters];
+      convertOpen = true;
+      document.getElementById("convertContent").style.display = "block";
+      document.getElementById("toggleText").innerText = "收起换算功能";
+      renderCounters();
+    }
+
+    function showImportNotice(payload) {
+      const notice = document.getElementById("importNotice");
+      const total = Number(payload.total || 0);
+      notice.innerHTML = `
+        <div>已导入视频识别结果：共 ${total} 辆。你可以先人工校正数量，再选择公路标准或城市道路标准进行标准交通量换算。</div>
+        <small>来源：视频识别精确分类结果</small>
+      `;
+      notice.style.display = "grid";
+    }
+
+    function toggleConvert() {
+      convertOpen = !convertOpen;
+      document.getElementById("convertContent").style.display = convertOpen ? "block" : "none";
+      document.getElementById("toggleText").innerText = convertOpen ? "收起换算功能" : "展开换算功能";
+    }
+
+    function selectStandard(type, event) {
+      currentStandard = type;
+      document.querySelectorAll(".standard-btn").forEach(button => button.classList.remove("active"));
+      event.currentTarget.classList.add("active");
+      document.getElementById("factorBox").style.display = "block";
+      document.getElementById("confirmButton").style.display = "inline-block";
+      renderFactorTable();
+      hideResult();
+    }
+
+    function renderFactorTable() {
+      const title = currentStandard === "road" ? "公路标准(JTG B01-2014) 车辆折算系数" : "城市道路标准(CJJ 37-2012) 车辆折算系数";
+      const key = currentStandard === "road" ? "road" : "city";
+      const rows = presetCounters.map(preset => {
+        const activeCounter = getCounter(preset.name);
+        const count = activeCounter ? activeCounter.count : 0;
+        return `
+        <tr>
+          <td>${escapeHtml(preset.name)}</td>
+          <td>${preset[key]}</td>
+          <td>${count}</td>
+          <td>${(count * preset[key]).toFixed(2)}</td>
+        </tr>
+      `;
+      }).join("");
+
+      document.getElementById("factorTable").innerHTML = `
+        <thead>
+          <tr><th colspan="4">${title}</th></tr>
+          <tr>
+            <th>字段/车型</th>
+            <th>系数</th>
+            <th>当前数量</th>
+            <th>折算量(pcu)</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      `;
+    }
+
+    function calcConvert() {
+      if (!currentStandard) {
+        alert("请先选择公路标准或城市道路标准。");
+        return;
+      }
+      const key = currentStandard === "road" ? "road" : "city";
+      const total = counters
+        .filter(item => !item.custom)
+        .reduce((sum, item) => sum + item.count * item[key], 0);
+      const box = document.getElementById("resultBox");
+      box.innerText = "标准交通量：" + total.toFixed(2) + " pcu";
+      box.style.display = "block";
+      renderFactorTable();
+    }
+
+    async function exportManualExcel() {
+      try {
+        normalizeTurningLaneCounts();
+        const response = await fetch("", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            counters,
+            current_standard: currentStandard,
+            turning_movement: turningMovement
+          })
+        });
+        if (!response.ok) {
+          const error = await response.json().catch(() => ({}));
+          alert(error.detail || "导出 Excel 失败。");
+          return;
+        }
+        const payload = await response.json();
+        const noticeHtml = `
+          <div>${escapeHtml(payload.message || "Excel 报表已生成")}：${escapeHtml(payload.filename || "")}</div>
+          <a href="${escapeAttr(payload.xlsx_url)}" download>点击下载 Excel 报表</a>
+        `;
+        ["exportNotice", "turningExportNotice"].forEach(id => {
+          const notice = document.getElementById(id);
+          if (!notice) return;
+          notice.innerHTML = noticeHtml;
+          notice.style.display = "grid";
+        });
+      } catch (error) {
+        alert("导出 Excel 失败，请确认本地程序正在运行。");
+      }
+    }
+
+    function hideResult() {
+      document.getElementById("resultBox").style.display = "none";
+    }
+
+    function toggleTable(id) {
+      const box = document.getElementById(id);
+      box.style.display = box.style.display === "block" ? "none" : "block";
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function escapeAttr(value) {
+      return escapeHtml(value);
+    }
+
+    function escapeJs(value) {
+      return String(value).replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+    }
+
+    loadData();
+    loadTurningMovement();
+    handlePendingVideoImport();
+    renderCounters();
+    renderTurningMovement();
+  </script>
+</body>
+</html>
+
+
+
