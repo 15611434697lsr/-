@@ -1598,6 +1598,7 @@
       document.getElementById("turningMovementModule").hidden = trafficActive;
       document.getElementById("trafficVolumeTab").classList.toggle("active", trafficActive);
       document.getElementById("turningMovementTab").classList.toggle("active", !trafficActive);
+      if (!trafficActive) renderTurningMovement();
     }
 
     function normalizeName(name) {
