@@ -1320,33 +1320,29 @@ p,
   color: #516173 !important;
 }
 
-.guide-preview {
-  transform: scale(1.03);
-}
-
 .guide-panel {
-  min-height: 190px !important;
-  padding: 34px !important;
+  min-height: 120px !important;
+  padding: 22px !important;
 }
 
 .guide-panel h2 {
-  font-size: clamp(34px, 4.8vw, 48px) !important;
+  font-size: clamp(28px, 3.4vw, 36px) !important;
 }
 
 .guide-panel p {
-  font-size: 22px !important;
+  font-size: 18px !important;
 }
 
 .guide-steps div {
-  padding: 20px !important;
+  padding: 14px !important;
 }
 
 .guide-steps strong {
-  font-size: 24px !important;
+  font-size: 20px !important;
 }
 
 .guide-steps small {
-  font-size: 16px !important;
+  font-size: 15px !important;
 }
 
 .entry-card {
