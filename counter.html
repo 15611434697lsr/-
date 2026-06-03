@@ -1352,7 +1352,7 @@
         <strong>断面交通量计数</strong>
         <span>车辆分类计数、人工校核、自定义字段</span>
       </button>
-      <button class="manual-module-card" id="turningMovementTab" type="button" onclick="selectManualModule('turningMovement')">
+      <button class="manual-module-card" id="turningMovementTab" type="button" onclick="selectManualModule('turningMovement'); scheduleTurningRender()">
         <strong>交叉口转向交通量计数</strong>
         <span>按进口道方向、转向车道和非机动车道统计</span>
       </button>
@@ -1598,7 +1598,28 @@
       document.getElementById("turningMovementModule").hidden = trafficActive;
       document.getElementById("trafficVolumeTab").classList.toggle("active", trafficActive);
       document.getElementById("turningMovementTab").classList.toggle("active", !trafficActive);
-      if (!trafficActive) renderTurningMovement();
+      if (!trafficActive) scheduleTurningRender();
+    }
+
+    function ensureTurningDefaults() {
+      const hasActiveLane = TURNING_TYPES.some(type => effectiveTurningLaneCount(type.key) > 0);
+      if (hasActiveLane) return;
+      turningMovement.lanes.left = 1;
+      turningMovement.lanes.through = 1;
+      turningMovement.lanes.right = 1;
+      turningMovement.lanes.nonMotor = 1;
+      normalizeTurningLaneCounts();
+    }
+
+    function scheduleTurningRender() {
+      window.setTimeout(() => {
+        ensureTurningDefaults();
+        renderTurningMovement();
+      }, 0);
+      window.setTimeout(() => {
+        ensureTurningDefaults();
+        renderTurningMovement();
+      }, 120);
     }
 
     function normalizeName(name) {
@@ -2191,7 +2212,7 @@
     loadTurningMovement();
     handlePendingVideoImport();
     renderCounters();
-    renderTurningMovement();
+    scheduleTurningRender();
   </script>
 </body>
 </html>
