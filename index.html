@@ -115,6 +115,124 @@
 </html>
 
 
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>智京交通计数器</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="scroll-progress" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="智京交通计数器">
+        
+        <span>智京交通计数器</span>
+      </a>
+      <nav aria-label="页面导航">
+        <a href="./counter.html">网页版人工计数器</a>
+        <a href="#download">下载软件</a>
+        <a href="./support.html">支持我们</a>
+        <a href="#notes">说明</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero reveal visible">
+        <div class="hero-content">
+          <p class="eyebrow">Manual Traffic Counter</p>
+          <h1>智京交通计数器</h1>
+          <p class="hero-text">
+            网站版提供与程序版人工计数器基本一致的在线计数功能；视频识别、数据导出和标准交通量换算请下载本地软件使用。
+          </p>
+          <div class="hero-actions">
+            <a class="primary-action" href="./counter.html">进入网页版人工计数器</a>
+            <a class="secondary-action" href="https://github.com/15611434697lsr/-/releases/latest/download/trafficcounter.zip" download>下载本地软件</a>
+          </div>
+        </div>
+
+        <div class="app-preview guide-preview" aria-label="在线计数器使用指引">
+          <div class="preview-titlebar">
+            <span></span><span></span><span></span>
+            <strong>网页版功能指引</strong>
+          </div>
+          <div class="preview-body">
+            <div class="guide-panel">
+              <h2>先选网页版计数器，完整识别下载软件</h2>
+              <p>网页端适合快速人工计数；视频识别、车速估计、Excel 导出和换算功能请使用本地软件。</p>
+            </div>
+            <div class="guide-steps">
+              <div><span>1</span><strong>网页人工计数</strong><small>进入二级页面，使用断面交通量计数和交叉口转向交通量计数。</small></div>
+              <div><span>2</span><strong>本地完整功能</strong><small>视频识别、车速估计、数据导出和标准换算需下载软件运行。</small></div>
+              <div><span>3</span><strong>结果需复核</strong><small>人工计数和视频识别均可能存在误差，正式使用前请复核。</small></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="counter" class="section counter-section reveal">
+        <div class="section-head">
+          <p class="eyebrow">Web Counter</p>
+          <h2>网页版人工计数器</h2>
+          <p>网页端单独作为二级页面打开，便于现场快速记录。该页面不提供 Excel 导出和标准交通量换算。</p>
+        </div>
+
+        <div class="entry-card">
+          <div>
+            <h3>进入计数器页面</h3>
+            <p>包含断面交通量计数、交叉口转向交通量计数、进口道方向与车道配置等人工计数功能。</p>
+          </div>
+          <a class="primary-action" href="./counter.html">打开网页版人工计数器</a>
+        </div>
+      </section>
+
+      <section id="download" class="download-section reveal">
+        <div class="download-copy">
+          <p class="eyebrow">Download</p>
+          <h2>下载本地软件</h2>
+          <p>如果需要使用完整本地软件，可以下载压缩包，解压后运行其中的 `智京交通计数器.exe`。</p>
+        </div>
+        <div class="download-actions">
+          <a class="primary-action" href="https://github.com/15611434697lsr/-/releases/latest/download/trafficcounter.zip" download>下载 trafficcounter.zip</a>
+          <button class="copy-button" type="button" data-copy="https://github.com/15611434697lsr/-/releases/latest/download/trafficcounter.zip">复制压缩包路径</button>
+        </div>
+        <p class="download-warning">
+          请确保解压后保留完整文件夹，不要只移动单独 exe。
+        </p>
+      </section>
+
+      <section id="support" class="section support-section reveal">
+        <div class="support-card">
+          <div>
+            <p class="eyebrow">Support</p>
+            <h2>支持我们 / 打赏</h2>
+            <p>
+              如果这个工具在交通调查、课堂实践或数据整理中帮到了你，可以进入二级页面查看二维码，自愿支持后续维护。
+            </p>
+          </div>
+          <a class="primary-action support-open" href="./support.html">进入支持我们页面</a>
+        </div>
+      </section>
+
+      <section id="notes" class="section notice-section reveal">
+        <h2>使用说明</h2>
+        <p>
+          网站版用于人工辅助计数，数据仅保存在当前浏览器页面中，刷新或关闭页面可能导致记录丢失。由于人工操作、浏览器状态、设备性能、视频画面质量和识别算法限制，计数、车型判断、车速估计、交叉口流向识别等结果可能存在误差。本软件仅作为交通调查和学习研究的辅助工具，不作为执法、鉴定、结算或安全决策的唯一依据；正式使用前请结合现场记录、人工复核和项目规范进行校验。
+        </p>
+      </section>
+    </main>
+
+    <button class="back-top" type="button" aria-label="返回顶部">↑</button>
+    <div class="toast" role="status" aria-live="polite">已复制</div>
+    <script src="./script.js"></script>
+  </body>
+</html>
+
+
 <!doctype html>
 <html lang="zh-CN">
   <head>
