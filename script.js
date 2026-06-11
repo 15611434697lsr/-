@@ -35,7 +35,7 @@ document.querySelectorAll("[data-copy]").forEach((button) => {
     const text = button.dataset.copy;
     try {
       await navigator.clipboard.writeText(text);
-      showToast("已复制压缩包下载链接");
+      showToast("已复制下载链接");
     } catch {
       showToast(text);
     }

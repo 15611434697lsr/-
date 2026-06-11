@@ -1368,6 +1368,75 @@ p,
   line-height: 1.8;
 }
 
+.feature-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.feature-card {
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid #d7e6fb;
+  border-radius: 8px;
+  box-shadow: 0 20px 55px rgba(37, 99, 235, 0.1);
+  display: grid;
+  gap: 10px;
+  padding: 22px;
+}
+
+.feature-card h3 {
+  color: #0f2544 !important;
+  font-size: 22px;
+}
+
+.feature-card p {
+  color: #516173 !important;
+}
+
+.github-section {
+  padding-top: 58px;
+}
+
+.github-card {
+  align-items: center;
+  background:
+    linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(29, 155, 240, 0.06)),
+    rgba(255, 255, 255, 0.96);
+  border: 1px solid #d7e6fb;
+  border-radius: 8px;
+  box-shadow: 0 20px 55px rgba(37, 99, 235, 0.12);
+  display: grid;
+  gap: 22px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  padding: 30px 32px;
+}
+
+.github-card h2 {
+  margin-top: 4px;
+}
+
+.github-card p {
+  color: #516173 !important;
+  margin-top: 8px;
+}
+
+.keyword-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.keyword-list span {
+  background: #eaf2ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 999px;
+  color: #1d4ed8;
+  font-size: 14px;
+  font-weight: 800;
+  padding: 7px 10px;
+}
+
 .support-page {
   display: grid;
   gap: 24px;
@@ -1425,6 +1494,15 @@ p,
 @media (max-width: 900px) {
   .guide-preview {
     transform: none;
+  }
+
+  .feature-grid,
+  .github-card {
+    grid-template-columns: 1fr;
+  }
+
+  .github-card .primary-action {
+    width: 100%;
   }
 
   .entry-card {

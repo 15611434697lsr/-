@@ -3,21 +3,35 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>交通计数器</title>
+    <title>交通计数器 v1.0.0 正式版 - 车流量人工计数与视频识别辅助工具</title>
+    <meta
+      name="description"
+      content="交通计数器提供断面交通量人工计数、交叉口转向交通量计数和本地视频识别辅助功能，适用于交通调查、课程实践、道路工程和车流量数据整理。"
+    />
+    <meta
+      name="keywords"
+      content="交通计数器,车流量计数,断面交通量,交叉口转向交通量,人工计数器,交通调查工具,视频识别车流量,道路交通调查,交通工程软件"
+    />
+    <meta name="robots" content="index,follow" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="交通计数器 v1.0.0 正式版" />
+    <meta property="og:description" content="网页版可直接人工计数，完整功能可下载 Windows 本地软件使用。" />
+    <meta property="og:url" content="https://15611434697lsr.github.io/-/" />
+    <link rel="canonical" href="https://15611434697lsr.github.io/-/" />
     <link rel="icon" href="data:," />
-    <link rel="stylesheet" href="./styles.css?v=20260603c" />
+    <link rel="stylesheet" href="./styles.css?v=20260611a" />
   </head>
   <body>
     <div class="scroll-progress" aria-hidden="true"></div>
 
     <header class="site-header">
       <a class="brand" href="#top" aria-label="交通计数器">
-        
         <span>交通计数器</span>
       </a>
       <nav aria-label="页面导航">
-        <a href="./counter.html">网页版人工计数器</a>
+        <a href="./counter.html">网页版计数器</a>
         <a href="#download">下载软件</a>
+        <a href="https://github.com/15611434697lsr/-" target="_blank" rel="noopener">GitHub</a>
         <a href="./support.html">支持我们</a>
         <a href="#notes">说明</a>
       </nav>
@@ -26,18 +40,24 @@
     <main id="top">
       <section class="hero reveal visible">
         <div class="hero-content">
-          <p class="eyebrow">Manual Traffic Counter</p>
+          <p class="eyebrow">Traffic Counter</p>
           <h1>交通计数器</h1>
           <p class="hero-text">
-            网站版提供与程序版人工计数器基本一致的在线计数功能；视频识别、数据导出和标准交通量换算请下载本地软件使用。
+            此网站为网页版计数器，完整功能请下载软件。网页版支持断面交通量和交叉口转向交通量人工计数；本地软件支持视频识别、车速估计、Excel 导出和交通量换算等完整流程。
           </p>
           <div class="hero-actions">
-            <a class="primary-action" href="./counter.html">进入网页版人工计数器</a>
-            <a class="secondary-action" href="https://github.com/15611434697lsr/-/releases/latest/download/trafficcounter.zip" download>下载本地软件</a>
+            <a class="primary-action" href="./counter.html">在线使用网页版计数器</a>
+            <a class="secondary-action" href="https://github.com/15611434697lsr/-/releases/latest/download/trafficcounter.zip" download>下载 Windows 软件</a>
+            <a class="secondary-action" href="https://github.com/15611434697lsr/-" target="_blank" rel="noopener">GitHub 点 Star</a>
+          </div>
+          <div class="metric-row" aria-label="功能概览">
+            <div><strong>2</strong><span>网页版人工计数模式</span></div>
+            <div><strong>v1.0.0</strong><span>正式版软件包</span></div>
+            <div><strong>Excel</strong><span>本地软件支持导出</span></div>
           </div>
         </div>
 
-        <div class="app-preview guide-preview" aria-label="在线计数器使用指引">
+        <div class="app-preview guide-preview" aria-label="网页版功能指引">
           <div class="preview-titlebar">
             <span></span><span></span><span></span>
             <strong>网页版功能指引</strong>
@@ -50,7 +70,7 @@
             <div class="guide-steps">
               <div><span>1</span><strong>网页人工计数</strong><small>进入二级页面，使用断面交通量计数和交叉口转向交通量计数。</small></div>
               <div><span>2</span><strong>本地完整功能</strong><small>视频识别、车速估计、数据导出和标准换算需下载软件运行。</small></div>
-              <div><span>3</span><strong>结果需复核</strong><small>人工计数和视频识别均可能存在误差，正式使用前请复核。</small></div>
+              <div><span>3</span><strong>结果需要复核</strong><small>人工计数和视频识别均可能存在误差，正式使用前请复核。</small></div>
             </div>
           </div>
         </div>
@@ -58,17 +78,43 @@
 
       <section id="counter" class="section counter-section reveal">
         <div class="section-head">
-          <p class="eyebrow">Web Counter</p>
+          <p class="eyebrow">Online Counter</p>
           <h2>网页版人工计数器</h2>
-          <p>网页端单独作为二级页面打开，便于现场快速记录。该页面不提供 Excel 导出和标准交通量换算。</p>
+          <p>无需安装，可在网页中直接使用。适合交通调查现场快速记录断面车流量和交叉口转向交通量。</p>
         </div>
 
         <div class="entry-card">
           <div>
             <h3>进入计数器页面</h3>
-            <p>包含断面交通量计数、交叉口转向交通量计数、进口道方向与车道配置等人工计数功能。</p>
+            <p>包含断面交通量计数、交叉口转向交通量计数、进口道方向与车道配置等人工计数功能。网页版不提供 Excel 导出和标准交通量换算。</p>
           </div>
           <a class="primary-action" href="./counter.html">打开网页版人工计数器</a>
+        </div>
+      </section>
+
+      <section class="section feature-section reveal">
+        <div class="section-head">
+          <p class="eyebrow">Use Cases</p>
+          <h2>适合这些场景</h2>
+          <p>面向交通工程、道路工程、城市道路调查、课程实践和车流量数据整理等轻量化需求。</p>
+        </div>
+        <div class="feature-grid">
+          <article class="feature-card">
+            <h3>断面交通量调查</h3>
+            <p>按车种记录断面通过车辆，适合道路流量调查、课堂实训和现场快速统计。</p>
+          </article>
+          <article class="feature-card">
+            <h3>交叉口转向统计</h3>
+            <p>按进口道、转向和车道配置记录交通量，辅助整理交叉口转向流量。</p>
+          </article>
+          <article class="feature-card">
+            <h3>视频识别辅助</h3>
+            <p>本地软件可上传短视频进行辅助识别，结果建议结合人工复核后使用。</p>
+          </article>
+          <article class="feature-card">
+            <h3>结果整理</h3>
+            <p>本地软件支持将主要统计结果导出为 Excel，便于后续报告、作业和项目资料整理。</p>
+          </article>
         </div>
       </section>
 
@@ -76,15 +122,33 @@
         <div class="download-copy">
           <p class="eyebrow">Download</p>
           <h2>下载本地软件</h2>
-          <p>如果需要使用完整本地软件，可以下载压缩包，解压后运行其中的 exe 程序。</p>
+          <p>如果需要使用完整本地软件，可以下载压缩包，解压后运行其中的 exe 程序。软件包托管在 GitHub Release，便于版本更新和公开下载。</p>
         </div>
         <div class="download-actions">
           <a class="primary-action" href="https://github.com/15611434697lsr/-/releases/latest/download/trafficcounter.zip" download>下载 trafficcounter.zip</a>
-          <button class="copy-button" type="button" data-copy="https://github.com/15611434697lsr/-/releases/latest/download/trafficcounter.zip">复制压缩包路径</button>
+          <button class="copy-button" type="button" data-copy="https://github.com/15611434697lsr/-/releases/latest/download/trafficcounter.zip">复制下载链接</button>
         </div>
         <p class="download-warning">
-          请确保解压后保留完整文件夹，不要只移动单独 exe。
+          请确保解压后保留完整文件夹，不要只移动单独的 exe 文件。视频识别结果可能受视频清晰度、视角、遮挡和光照影响，请复核后使用。
         </p>
+      </section>
+
+      <section class="section github-section reveal">
+        <div class="github-card">
+          <div>
+            <p class="eyebrow">Open Project</p>
+            <h2>在 GitHub 上关注项目</h2>
+            <p>如果这个工具对你有帮助，可以进入 GitHub 仓库点 Star。Star 越多，项目越容易被搜索到，也更方便其他交通调查和课程实践用户发现。</p>
+            <div class="keyword-list" aria-label="项目关键词">
+              <span>交通计数器</span>
+              <span>车流量计数</span>
+              <span>交叉口转向交通量</span>
+              <span>交通调查工具</span>
+              <span>视频识别辅助</span>
+            </div>
+          </div>
+          <a class="primary-action" href="https://github.com/15611434697lsr/-" target="_blank" rel="noopener">前往 GitHub 点 Star</a>
+        </div>
       </section>
 
       <section id="support" class="section support-section reveal">
@@ -92,24 +156,22 @@
           <div>
             <p class="eyebrow">Support</p>
             <h2>支持我们 / 打赏</h2>
-            <p>
-              如果这个工具在交通调查、课堂实践或数据整理中帮到了你，可以进入二级页面查看二维码，自愿支持后续维护。
-            </p>
+            <p>如果这个工具在交通调查、课堂实践或数据整理中帮到了你，可以进入二级页面查看二维码，自愿支持后续维护。</p>
           </div>
           <a class="primary-action support-open" href="./support.html">进入支持我们页面</a>
         </div>
       </section>
 
       <section id="notes" class="section notice-section reveal">
-        <h2>使用说明</h2>
+        <h2>使用说明与免责声明</h2>
         <p>
-          网站版用于人工辅助计数，数据仅保存在当前浏览器页面中，刷新或关闭页面可能导致记录丢失。由于人工操作、浏览器状态、设备性能、视频画面质量和识别算法限制，计数、车型判断、车速估计、交叉口流向识别等结果可能存在误差。本软件仅作为交通调查和学习研究的辅助工具，不作为执法、鉴定、结算或安全决策的唯一依据；正式使用前请结合现场记录、人工复核和项目规范进行校验。
+          网站版用于人工辅助计数，数据仅保存在当前浏览器页面中，刷新或关闭页面可能导致记录丢失。由于人工操作、浏览器状态、设备性能、视频画面质量和识别算法限制，计数、车型判断、车速估计、交叉口流向识别等结果可能存在误差。本软件仅作为交通调查、学习研究和数据整理的辅助工具，不作为执法、鉴定、结算或安全决策的唯一依据；正式使用前请结合现场记录、人工复核和项目规范进行校验。
         </p>
       </section>
     </main>
 
     <button class="back-top" type="button" aria-label="返回顶部">↑</button>
     <div class="toast" role="status" aria-live="polite">已复制</div>
-    <script src="./script.js"></script>
+    <script src="./script.js?v=20260611a"></script>
   </body>
 </html>
